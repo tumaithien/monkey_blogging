@@ -29,7 +29,6 @@ const UserUpdate = () => {
   } = useForm({
     mode: "onChange",
   });
-
   const [params] = useSearchParams();
   const userId = params.get("id");
   const watchStatus = watch("status");
