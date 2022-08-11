@@ -8,7 +8,8 @@ import {
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Heading from "../../components/layout/Heading";
-import { LoadingSkeleton } from "../../components/loading";
+import HeadingSkeleton from "../../components/skeleton/HeadingSkeleton";
+import PostItemSkeleton from "../../components/skeleton/PostItemSkeleton";
 import { db } from "../../firebase-app/firebase-config";
 import PostFeatureItem from "../post/PostFeatureItem";
 
@@ -17,7 +18,6 @@ const HomeFearture = () => {
   //Get data posts hot from firebase
   const [posts, setPosts] = useState([]);
   const isLoading = posts.length <= 0;
-  console.log(isLoading);
   useEffect(() => {
     const colRef = collection(db, "posts");
     const queries = query(
@@ -37,8 +37,6 @@ const HomeFearture = () => {
       setPosts(results);
     });
   }, []);
-
-  console.log(posts);
   // if (posts.length <= 0) return null;
   return (
     <HomeFeartureStyles className="home-block">
@@ -66,27 +64,4 @@ const HomeFearture = () => {
     </HomeFeartureStyles>
   );
 };
-
-function HeadingSkeleton() {
-  return (
-    <div className="w-full h-[49px] rounded-md mb-5">
-      <LoadingSkeleton
-        width="200px"
-        height="100%"
-        radius="8px"
-      ></LoadingSkeleton>
-    </div>
-  );
-}
-function PostItemSkeleton() {
-  return (
-    <div className="w-full h-[272px] rounded-md">
-      <LoadingSkeleton
-        width="100%"
-        height="100%"
-        radius="8px"
-      ></LoadingSkeleton>
-    </div>
-  );
-}
 export default HomeFearture;

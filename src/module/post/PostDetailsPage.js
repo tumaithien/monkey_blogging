@@ -123,7 +123,6 @@ const PostDetailsPage = () => {
     document.body.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [slug]);
   const { title, user, category, createAt, image } = postInfo;
-  console.log(postInfo);
   const postContent = parse(postInfo?.content || "");
   if (!postInfo.slug) {
     return null;

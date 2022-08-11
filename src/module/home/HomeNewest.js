@@ -13,6 +13,8 @@ import PostItem from "../post/PostItem";
 import PostNewestItem from "../post/PostNewestItem";
 import PostNewestLarge from "../post/PostNewestLarge";
 import { v4 } from "uuid";
+import HeadingSkeleton from "../../components/skeleton/HeadingSkeleton";
+import PostItemSkeleton from "../../components/skeleton/PostItemSkeleton";
 
 const HomeNewestStyles = styled.div`
   .layout {
@@ -38,6 +40,7 @@ const HomeNewestStyles = styled.div`
 `;
 const HomeNewest = () => {
   const [posts, setPosts] = useState([]);
+  const isLoading = posts.length <= 0;
   useEffect(() => {
     const colRef = collection(db, "posts");
     const queries = query(colRef, where("status", "==", 1), limit(4));
@@ -55,20 +58,32 @@ const HomeNewest = () => {
   const dataPost = posts.sort(function (a, b) {
     return b.createAt.seconds - a.createAt.seconds;
   });
-  if (dataPost.length <= 0) return null;
+  // if (dataPost.length <= 0) return null;
   const [first, ...other] = dataPost;
   return (
     <HomeNewestStyles className="home-block">
       <div className="container">
-        <Heading>Newest article</Heading>
+        {isLoading ? (
+          <HeadingSkeleton></HeadingSkeleton>
+        ) : (
+          <Heading>Newest article</Heading>
+        )}
         <div className="layout">
-          <PostNewestLarge data={first}></PostNewestLarge>
-          <div className="sidebar">
-            {other.length > 0 &&
-              other.map((item) => (
-                <PostNewestItem key={v4()} data={item}></PostNewestItem>
-              ))}
-          </div>
+          {isLoading ? (
+            <PostItemSkeleton></PostItemSkeleton>
+          ) : (
+            <PostNewestLarge data={first}></PostNewestLarge>
+          )}
+          {isLoading ? (
+            <PostItemSkeleton></PostItemSkeleton>
+          ) : (
+            <div className="sidebar">
+              {other.length > 0 &&
+                other.map((item) => (
+                  <PostNewestItem key={v4()} data={item}></PostNewestItem>
+                ))}
+            </div>
+          )}
         </div>
         <div className="grid-layout grid-layout--primary">
           {dataPost.length > 0 &&

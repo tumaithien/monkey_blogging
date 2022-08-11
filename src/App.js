@@ -8,6 +8,7 @@ const CategoryPage = React.lazy(() => import("./pages/CategoryPage"));
 const PageNotFound = React.lazy(() => import("./pages/PageNotFound"));
 const SignInPage = React.lazy(() => import("./pages/SignInPage"));
 const SignUpPage = React.lazy(() => import("./pages/SignUpPage"));
+const BlogPage = React.lazy(() => import("./pages/BlogPage"));
 const PostDetailsPage = React.lazy(() =>
   import("./module/post/PostDetailsPage")
 );
@@ -43,6 +44,7 @@ function App() {
             <Route path="/" element={<HomePage></HomePage>}></Route>
             <Route path="/sign-up" element={<SignUpPage></SignUpPage>}></Route>
             <Route path="/sign-in" element={<SignInPage></SignInPage>}></Route>
+            <Route path="/blog" element={<BlogPage></BlogPage>}></Route>
             <Route path="*" element={<PageNotFound></PageNotFound>}></Route>
             <Route
               path="/category/:slug"
