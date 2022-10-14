@@ -26,7 +26,7 @@ import { LabelStatus } from "../../components/label";
 import { postStatus, userRole } from "../../utils/contants";
 import { useAuth } from "../../context/auth-context";
 
-const POST_PER_PAGE = 5;
+const POST_PER_PAGE = 3;
 const PostManager = () => {
   const [postList, setPostList] = useState([]);
   const [filter, setFilter] = useState(undefined);
@@ -37,44 +37,12 @@ const PostManager = () => {
   const [selectCategory, setSelectCategory] = useState();
   const navigate = useNavigate();
   const { userInfo } = useAuth();
-  const handleLoadMorePost = async () => {
-    const nextRef = query(
-      collection(db, "posts"),
-      startAfter(lastDoc || 0),
-      limit(POST_PER_PAGE)
-    );
-    onSnapshot(nextRef, (snapshot) => {
-      let results = [];
-      snapshot.forEach((doc) => {
-        results.push({
-          id: doc.id,
-          ...doc.data(),
-        });
-      });
-      setPostList([...postList, ...results]);
-    });
-    const documentSnapshots = await getDocs(nextRef);
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastDoc(lastVisible);
-  };
+
   //Find post by title
   useEffect(() => {
     async function fetchData() {
       const colRef = collection(db, "posts");
       const newRef = filter
-        ? query(
-            colRef,
-            where("title", ">=", filter),
-            where("title", "<=", filter + "utf8"),
-            where("user.id", "==", userInfo.uid)
-          )
-        : query(
-            colRef,
-            limit(POST_PER_PAGE),
-            where("user.id", "==", userInfo.uid)
-          );
-      const adRef = filter
         ? query(
             colRef,
             where("title", ">=", filter),
@@ -84,19 +52,10 @@ const PostManager = () => {
       const documentSnapshots = await getDocs(newRef);
       const lastVisible =
         documentSnapshots.docs[documentSnapshots.docs.length - 1];
+      onSnapshot(colRef, (snapshot) => {
+        setTotal(snapshot.size);
+      });
       if (userInfo.role === userRole.ADMIN) {
-        onSnapshot(adRef, (snapshot) => {
-          let results = [];
-          snapshot.forEach((doc) => {
-            results.push({
-              id: doc.id,
-              ...doc.data(),
-            });
-          });
-          setTotal(snapshot.size);
-          setPostList(results);
-        });
-      } else {
         onSnapshot(newRef, (snapshot) => {
           let results = [];
           snapshot.forEach((doc) => {
@@ -105,14 +64,13 @@ const PostManager = () => {
               ...doc.data(),
             });
           });
-          setTotal(snapshot.size);
           setPostList(results);
         });
       }
       setLastDoc(lastVisible);
     }
     fetchData();
-  }, [filter, userInfo.role, userInfo.uid]);
+  }, [filter, userInfo.role]);
   //Get data category from firebase to dropdown
   useEffect(() => {
     async function getData() {
@@ -154,6 +112,27 @@ const PostManager = () => {
     }
     fetchDataCategory();
   }, [filterCategory]);
+  const handleLoadMorePost = async () => {
+    const nextRef = query(
+      collection(db, "posts"),
+      startAfter(lastDoc || 0),
+      limit(POST_PER_PAGE)
+    );
+    onSnapshot(nextRef, (snapshot) => {
+      let results = [];
+      snapshot.forEach((doc) => {
+        results.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+      setPostList([...postList, ...results]);
+    });
+    const documentSnapshots = await getDocs(nextRef);
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastDoc(lastVisible);
+  };
   const handleDeletePost = async (docId) => {
     const colRef = doc(db, "posts", docId);
     Swal.fire({

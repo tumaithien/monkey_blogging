@@ -1,9 +1,9 @@
 import React from "react";
 import { LoadingSkeleton } from "../loading";
 
-const PostItemSkeleton = () => {
+const PostItemSkeleton = ({ height = "272px" }) => {
   return (
-    <div className="w-full h-[272px] rounded-md">
+    <div className={`w-full h-[${height}] rounded-md`}>
       <LoadingSkeleton
         width="100%"
         height="100%"
